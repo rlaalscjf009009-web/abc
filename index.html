@@ -1,54 +1,287 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>빗썸 종목 검색기</title>
 <style>
-:root{color-scheme:light;--bg:#fff;--fg:#111;--muted:#777;--line:#e9e9e9;--accent:#246bfe;--good:#0a8f54;--bad:#d63d3d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px}header{position:sticky;top:0;background:#fff;z-index:2;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 16px) 18px 14px}h1{font-size:20px;margin:0;font-weight:750;letter-spacing:-.5px}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:57px;background:#fff;z-index:2}.tab{border:0;background:transparent;padding:10px 2px;color:#777;font-size:12px;border-radius:8px;white-space:nowrap}.tab.active{background:#f1f4f8;color:#111;font-weight:700}main{padding:16px 14px calc(30px + env(safe-area-inset-bottom));max-width:760px;margin:auto}.primary{width:100%;border:0;border-radius:12px;background:#111;color:#fff;padding:15px;font-size:15px;font-weight:700}.primary:disabled{opacity:.5}.status{color:var(--muted);font-size:12px;margin:10px 2px 14px;min-height:16px}.summary{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 12px;color:var(--muted);font-size:12px}.item{border-bottom:1px solid var(--line);padding:14px 2px;display:grid;gap:10px}.itemtop{display:flex;justify-content:space-between;align-items:center;gap:10px}.coin{font-size:15px;font-weight:750}.rate{font-weight:750;color:var(--good);font-variant-numeric:tabular-nums}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.metric span{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.metric b{font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.empty{text-align:center;color:#888;padding:54px 10px}.date{color:var(--muted);font-size:11px}.pill{font-size:11px;border-radius:20px;padding:4px 8px;background:#f1f1f1}.pill.good{background:#e7f7ef;color:var(--good)}.pill.bad{background:#fff0f0;color:var(--bad)}.rowactions{display:flex;justify-content:flex-end;gap:8px}.smallbtn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;color:#444}.sectiontitle{font-size:14px;font-weight:750;margin:4px 0 12px}.monthhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.monthhead input{border:1px solid var(--line);padding:7px;border-radius:8px;background:white}.foot{font-size:11px;color:#888;margin-top:18px;text-align:center}#install{display:none;margin-bottom:10px;background:#f1f4f8;color:#111}.notice{font-size:12px;color:#777;margin:10px 2px}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;color:#171717;background:#fff;font-size:14px}
+header{padding:20px 16px 14px;border-bottom:1px solid #eee}
+h1{font-size:20px;margin:0;font-weight:750}
+nav{display:grid;grid-template-columns:repeat(4,1fr);padding:8px;gap:4px;border-bottom:1px solid #eee;position:sticky;top:0;background:white}
+nav button{border:0;background:white;padding:12px 0;border-radius:8px;font-size:12px;color:#777}
+nav button.active{background:#f0f2f5;color:#111;font-weight:700}
+main{padding:16px;max-width:650px;margin:auto}
+button{cursor:pointer}
+.primary{width:100%;padding:15px;background:#171717;color:white;border:0;border-radius:10px;font-size:15px;font-weight:700}
+.primary:disabled{opacity:.5}
+.status{font-size:12px;color:#777;margin:12px 2px}
+.item{padding:15px 2px;border-bottom:1px solid #eee}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.coin{font-weight:750;font-size:15px}
+.rate{font-weight:750;color:#07864b;font-variant-numeric:tabular-nums}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.label{display:block;color:#888;font-size:11px;margin-bottom:5px}
+.value{font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.empty{text-align:center;color:#999;padding:50px 8px}
+.small{border:1px solid #eee;background:white;border-radius:7px;padding:7px 10px;font-size:12px}
+.pill{font-size:11px;background:#f1f1f1;padding:5px 8px;border-radius:20px}
+.good{color:#07864b;background:#e8f7ef}
+.bad{color:#c33;background:#fff0f0}
+.date{font-size:11px;color:#888;margin-top:8px}
+.actions{display:flex;justify-content:flex-end;margin-top:10px}
+.monthhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+input[type=month]{border:1px solid #eee;border-radius:7px;padding:7px}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header><h1>빗썸 종목 검색기</h1></header>
-<nav class="tabs" aria-label="메뉴">
-<button class="tab active" data-page="search">검색</button><button class="tab" data-page="history">검색 기록</button><button class="tab" data-page="monthly">월 성공 종목</button><button class="tab" data-page="records">기록</button>
+
+<nav>
+<button class="active" data-page="search">검색</button>
+<button data-page="history">검색 기록</button>
+<button data-page="monthly">10월 성공 종목</button>
+<button data-page="records">기록</button>
 </nav>
+
 <main>
-<button class="primary" id="install">앱 설치</button>
 <section id="searchPage">
-<button class="primary" id="searchBtn">종목 조건 검색</button><div class="status" id="status"></div><div id="results"></div>
+<button class="primary" id="searchBtn">종목 조건 검색</button>
+<div class="status" id="status"></div>
+<div id="results"></div>
 </section>
-<section id="historyPage" hidden><div class="summary"><span>검색 기록</span><button class="smallbtn" id="clearHistory">기록 삭제</button></div><div id="history"></div></section>
-<section id="monthlyPage" hidden><div class="monthhead"><div class="sectiontitle" id="monthlyTitle">월 성공 종목</div><input type="month" id="monthPicker"></div><div id="monthly"></div></section>
-<section id="recordsPage" hidden><div class="summary"><span>목표가 도달 기록</span><span id="recordCount"></span></div><div id="records"></div></section>
+
+<section id="historyPage" hidden>
+<div class="actions"><button class="small" id="clearHistory">기록 삭제</button></div>
+<div id="history"></div>
+</section>
+
+<section id="monthlyPage" hidden>
+<div class="monthhead">
+<strong id="monthlyTitle"></strong>
+<input type="month" id="monthPicker">
+</div>
+<div id="monthly"></div>
+</section>
+
+<section id="recordsPage" hidden>
+<div id="records"></div>
+</section>
 </main>
+
 <script>
 const API='https://api.bithumb.com';
+const KEY='bithumb-finder-v2';
 const $=id=>document.getElementById(id);
-const KEY='bithumb-finder-v1';
-let db=loadDB(), deferredPrompt=null;
-function monthKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
-function loadDB(){try{return JSON.parse(localStorage.getItem(KEY))||{history:[],records:[],success:{}}}catch{return {history:[],records:[],success:{}}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(db))}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function num(n){return Number(n).toLocaleString('ko-KR',{minimumFractionDigits:0,maximumFractionDigits:3})}
-function pct(n){return `${n>=0?'+':''}${n.toFixed(3)}%`}
-async function api(path,params={}){const u=new URL(API+path);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));const r=await fetch(u);if(!r.ok)throw new Error(`API ${r.status}`);return r.json()}
-async function getPrices(markets){let out={};for(let i=0;i<markets.length;i+=50){const data=await api('/v1/ticker',{markets:markets.slice(i,i+50).join(',')});for(const x of data)out[x.market]=+x.trade_price}return out}
-async function scanOne(market,price){try{const c=await api('/v1/candles/months',{market,count:2});if(c.length<2)return null;const high=+c[0].high_price,close=+c[1].trade_price,target=close*.997;if(high>=close){return {market,high,close,price,target,hit:price>=target,passed:true}}if(high<close)return {market,high,close,price,target,rate:(target/price-1)*100,hit:price>=target,passed:false};return null}catch{return null}}
-function upsertRecord(item,month,stamp){let r=db.records.find(x=>x.month===month&&x.market===item.market);if(!r){r={month,market:item.market,firstSeen:stamp,target:item.target,initialPrice:item.price,hit:false,hitAt:null,lastPrice:item.price};db.records.unshift(r)}r.target=item.target;r.lastPrice=item.price;if(item.price>=item.target&&!r.hit){r.hit=true;r.hitAt=stamp}}
-function renderItems(el,items,mode){if(!items.length){el.innerHTML='<div class="empty">결과 없음</div>';return}el.innerHTML=items.map(x=>{const rate=x.rate??((x.target/x.price-1)*100);return `<article class="item"><div class="itemtop"><div class="coin">${esc(x.market.replace('KRW-',''))}<span class="date"> · ${esc(x.market)}</span></div><div class="rate">${pct(rate)}</div></div><div class="metrics"><div class="metric"><span>현재가</span><b>${num(x.price)}</b></div><div class="metric"><span>목표가</span><b>${num(x.target)}</b></div><div class="metric"><span>전월 종가</span><b>${num(x.close)}</b></div></div>${mode==='history'?`<div class="date">${esc(x.stamp||'')} · ${x.count||''}개 검색 결과</div>`:''}${mode==='record'?`<div class="itemtop"><span class="date">최초 검색 ${esc(x.firstSeen||'')}</span><span class="pill ${x.hit?'good':'bad'}">${x.hit?'성공':'미도달'}</span></div>`:''}</article>`}).join('')}
-function renderHistory(){const el=$('history');if(!db.history.length){el.innerHTML='<div class="empty">기록 없음</div>';return}el.innerHTML=db.history.map((h,i)=>`<article class="item"><div class="itemtop"><b>${esc(h.stamp)}</b><span class="pill">${h.items.length}개</span></div><div class="rowactions"><button class="smallbtn" data-view-history="${i}">결과 보기</button></div></article>`).join('');el.querySelectorAll('[data-view-history]').forEach(b=>b.onclick=()=>{const h=db.history[+b.dataset.viewHistory];$('searchPage').hidden=false;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.page==='search'));['historyPage','monthlyPage','recordsPage'].forEach(id=>$(id).hidden=true);renderItems($('results'),h.items);$('status').textContent=h.stamp})}
-function renderMonthly(){const month=$('monthPicker').value||monthKey();$('monthlyTitle').textContent=`${month} 성공 종목`;const items=db.success[month]||[];const el=$('monthly');if(!items.length){el.innerHTML='<div class="empty">성공 종목 없음</div>';return}el.innerHTML=items.map(x=>`<article class="item"><div class="itemtop"><b>${esc(x.market)}</b><span class="pill good">성공</span></div><div class="metrics"><div class="metric"><span>돌파 고가</span><b>${num(x.high)}</b></div><div class="metric"><span>전월 종가</span><b>${num(x.close)}</b></div><div class="metric"><span>확인 일시</span><b>${esc(x.stamp)}</b></div></div></article>`).join('')}
-function renderRecords(){const month=monthKey();const items=db.records.filter(x=>x.month===month);$('recordCount').textContent=`${items.filter(x=>x.hit).length}/${items.length} 성공`;renderItems($('records'),items.map(x=>({...x,price:x.lastPrice,target:x.target,close:x.target/.997,rate:(x.target/x.initialPrice-1)*100})).sort((a,b)=>(b.hit-a.hit)), 'record')}
-function showPage(page){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.page===page));for(const p of ['search','history','monthly','records'])$(p+'Page').hidden=p!==page;if(page==='history')renderHistory();if(page==='monthly')renderMonthly();if(page==='records')renderRecords()}
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showPage(t.dataset.page)));
-$('monthPicker').value=monthKey();$('monthPicker').addEventListener('change',renderMonthly);
-$('searchBtn').addEventListener('click',async()=>{const btn=$('searchBtn');btn.disabled=true;$('status').textContent='검색 중';$('results').innerHTML='';try{const markets=(await api('/v1/market/all',{isDetails:'false'})).filter(x=>x.market.startsWith('KRW-')).map(x=>x.market);const prices=await getPrices(markets);const available=markets.filter(m=>prices[m]>0);let results=[];const concurrency=5;for(let i=0;i<available.length;i+=concurrency){const part=await Promise.all(available.slice(i,i+concurrency).map(m=>scanOne(m,prices[m])));results.push(...part.filter(Boolean))}const now=new Date(),stamp=now.toLocaleString('ko-KR'),month=monthKey(now);const tracked=new Set(db.records.filter(r=>r.month===month).map(r=>r.market));for(const h of db.history){for(const item of h.items||[])if(h.month===month)tracked.add(item.market)}const filtered=results.filter(x=>!x.passed).map(x=>({...x,stamp})).sort((a,b)=>b.rate-a.rate);for(const x of filtered)upsertRecord(x,month,stamp);for(const x of results.filter(x=>x.passed)){if(tracked.has(x.market)){const rec=db.records.find(r=>r.month===month&&r.market===x.market);if(rec){rec.lastPrice=x.price;if(x.price>=rec.target&&!rec.hit){rec.hit=true;rec.hitAt=stamp}}db.success[month]??=[];if(!db.success[month].some(s=>s.market===x.market))db.success[month].unshift({market:x.market,high:x.high,close:x.close,stamp})}}for(const r of db.records.filter(r=>r.month===month)){const latest=prices[r.market];if(latest>0){r.lastPrice=latest;if(latest>=r.target&&!r.hit){r.hit=true;r.hitAt=stamp}}}db.history.unshift({stamp,month,items:filtered});db.history=db.history.slice(0,100);save();renderItems($('results'),filtered);$('status').textContent=`${stamp} · ${filtered.length}개 종목`; }catch(e){$('status').textContent='검색 실패';$('results').innerHTML=`<div class="empty">API 연결 실패: ${esc(e.message)}<br>HTTPS 주소에서 다시 시도</div>`}finally{btn.disabled=false}});
-$('clearHistory').onclick=()=>{if(confirm('검색 기록을 삭제할까요?')){db.history=[];save();renderHistory()}};
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').style.display='block'});$('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('install').style.display='none'}};
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
-renderMonthly();renderRecords();
+
+function monthKey(d=new Date()){
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function loadDB(){
+ try{
+  return JSON.parse(localStorage.getItem(KEY))||{history:[],records:[],success:{}};
+ }catch{
+  return {history:[],records:[],success:{}};
+ }
+}
+let db=loadDB();
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+}
+function esc(s){
+ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function num(n){
+ return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:3});
+}
+function pct(n){
+ return `${n>=0?'+':''}${n.toFixed(3)}%`;
+}
+async function api(path,params={}){
+ const u=new URL(API+path);
+ Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+ const r=await fetch(u);
+ if(!r.ok)throw Error(`HTTP ${r.status}`);
+ return r.json();
+}
+async function getPrices(markets){
+ const prices={};
+ for(let i=0;i<markets.length;i+=50){
+  const data=await api('/v1/ticker',{markets:markets.slice(i,i+50).join(',')});
+  data.forEach(x=>prices[x.market]=+x.trade_price);
+ }
+ return prices;
+}
+async function scanOne(market,price){
+ try{
+  const c=await api('/v1/candles/months',{market,count:2});
+  if(c.length<2)return null;
+  const high=+c[0].high_price;
+  const close=+c[1].trade_price;
+  const target=close*0.997;
+  return {market,high,close,price,target,passed:high>=close};
+ }catch{
+  return null;
+ }
+}
+function renderItems(el,items,mode=''){
+ if(!items.length){
+  el.innerHTML='<div class="empty">결과 없음</div>';
+  return;
+ }
+ el.innerHTML=items.map(x=>{
+  const rate=x.rate??((x.target/x.price-1)*100);
+  return `<article class="item">
+   <div class="top">
+    <span class="coin">${esc(x.market)}</span>
+    <span class="rate">${pct(rate)}</span>
+   </div>
+   <div class="metrics">
+    <div><span class="label">현재가</span><span class="value">${num(x.price)}</span></div>
+    <div><span class="label">목표가</span><span class="value">${num(x.target)}</span></div>
+   </div>
+   ${mode==='record'?`<div class="top" style="margin-top:12px;margin-bottom:0"><span class="date">검색 ${esc(x.firstSeen||'')}</span><span class="pill ${x.hit?'good':'bad'}">${x.hit?'성공':'미도달'}</span></div>`:''}
+   ${mode==='history'?`<div class="date">${esc(x.stamp||'')}</div>`:''}
+  </article>`;
+ }).join('');
+}
+function renderHistory(){
+ const el=$('history');
+ if(!db.history.length){
+  el.innerHTML='<div class="empty">기록 없음</div>';
+  return;
+ }
+ el.innerHTML=db.history.map((h,i)=>`
+  <article class="item">
+   <div class="top"><b>${esc(h.stamp)}</b><span class="pill">${h.items.length}개</span></div>
+   <div class="actions"><button class="small" data-open="${i}">결과 보기</button></div>
+  </article>`).join('');
+ el.querySelectorAll('[data-open]').forEach(b=>{
+  b.onclick=()=>{
+   const h=db.history[+b.dataset.open];
+   showPage('search');
+   renderItems($('results'),h.items);
+   $('status').textContent=h.stamp;
+  };
+ });
+}
+function renderMonthly(){
+ const month=$('monthPicker').value||monthKey();
+ $('monthlyTitle').textContent=`${Number(month.slice(5))}월 성공 종목`;
+ document.querySelector('[data-page="monthly"]').textContent=`${Number(month.slice(5))}월 성공 종목`;
+ const items=db.success[month]||[];
+ if(!items.length){
+  $('monthly').innerHTML='<div class="empty">성공 종목 없음</div>';
+  return;
+ }
+ $('monthly').innerHTML=items.map(x=>`
+  <article class="item">
+   <div class="top"><b>${esc(x.market)}</b><span class="pill good">성공</span></div>
+   <div class="date">${esc(x.stamp)}</div>
+  </article>`).join('');
+}
+function renderRecords(){
+ const month=monthKey();
+ const items=db.records.filter(x=>x.month===month)
+  .sort((a,b)=>Number(b.hit)-Number(a.hit));
+ renderItems($('records'),items.map(x=>({
+  ...x,
+  price:x.lastPrice,
+  rate:(x.target/x.initialPrice-1)*100
+ })),'record');
+}
+function showPage(page){
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+ ['search','history','monthly','records'].forEach(p=>$(p+'Page').hidden=p!==page);
+ if(page==='history')renderHistory();
+ if(page==='monthly')renderMonthly();
+ if(page==='records')renderRecords();
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+$('monthPicker').value=monthKey();
+$('monthPicker').onchange=renderMonthly;
+
+$('clearHistory').onclick=()=>{
+ if(confirm('검색 기록을 삭제할까요?')){
+  db.history=[];
+  save();
+  renderHistory();
+ }
+};
+
+$('searchBtn').onclick=async()=>{
+ const btn=$('searchBtn');
+ btn.disabled=true;
+ $('status').textContent='검색 중';
+ $('results').innerHTML='';
+ try{
+  const markets=(await api('/v1/market/all',{isDetails:'false'}))
+   .filter(x=>x.market.startsWith('KRW-')).map(x=>x.market);
+  const prices=await getPrices(markets);
+  const available=markets.filter(m=>prices[m]>0);
+  const results=[];
+  for(let i=0;i<available.length;i+=5){
+   const batch=await Promise.all(available.slice(i,i+5).map(m=>scanOne(m,prices[m])));
+   results.push(...batch.filter(Boolean));
+  }
+  const now=new Date();
+  const stamp=now.toLocaleString('ko-KR');
+  const month=monthKey(now);
+  const tracked=new Set(db.records.filter(r=>r.month===month).map(r=>r.market));
+  const filtered=results.filter(x=>!x.passed).map(x=>({
+   ...x,stamp,rate:(x.target/x.price-1)*100
+  })).sort((a,b)=>b.rate-a.rate);
+
+  for(const x of filtered){
+   let r=db.records.find(r=>r.month===month&&r.market===x.market);
+   if(!r){
+    r={month,market:x.market,firstSeen:stamp,target:x.target,initialPrice:x.price,hit:false,lastPrice:x.price};
+    db.records.unshift(r);
+   }
+   r.target=x.target;
+   r.lastPrice=x.price;
+   if(x.price>=x.target)r.hit=true;
+  }
+
+  db.success[month]??=[];
+  for(const x of results.filter(x=>x.passed&&tracked.has(x.market))){
+   if(!db.success[month].some(s=>s.market===x.market)){
+    db.success[month].unshift({market:x.market,stamp});
+   }
+  }
+
+  for(const r of db.records.filter(r=>r.month===month)){
+   const p=prices[r.market];
+   if(p>0){
+    r.lastPrice=p;
+    if(p>=r.target)r.hit=true;
+   }
+  }
+
+  db.history.unshift({stamp,month,items:filtered});
+  db.history=db.history.slice(0,100);
+  save();
+  renderItems($('results'),filtered);
+  $('status').textContent=`${filtered.length}개 종목`;
+ }catch(e){
+  $('status').textContent='검색 실패';
+  $('results').innerHTML='<div class="empty">검색 실패</div>';
+ }finally{
+  btn.disabled=false;
+ }
+};
+
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+renderMonthly();
+renderRecords();
 </script>
-</body></html>
+</body>
+</html>
